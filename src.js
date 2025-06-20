@@ -64,7 +64,7 @@ function copyTextToClipboard(text) {
 }
 
 function amazonURLShorten(){
-    ['www.amazon.co.jp', 'www.amazon.com'].includes(location.host) && (m = location.pathname.match(/\/(dp|gp\/product)\/\w+/)) ? location.href = location.origin + m[0] : alert( % 27 Amazon\u306e\u5546\u54c1\u30da\u30fc\u30b8\u3092\u8868\u793a\u3057\u3066\u304f\u3060\u3055\u3044 % 27);
+    ['www.amazon.co.jp', 'www.amazon.com'].includes(location.host) && (m = location.pathname.match(/\/(dp|gp\/product)\/\w+/)) ? location.href = location.origin + m[0] : alert("Amazon\u306e\u5546\u54c1\u30da\u30fc\u30b8\u3092\u8868\u793a\u3057\u3066\u304f\u3060\u3055\u3044");
 }
 
 function fallbackCopyTextToClipboard(text) {

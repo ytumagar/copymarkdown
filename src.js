@@ -3,35 +3,39 @@ btnTxtMkdn = "markdownでコピー";
 btnTxtCncl = "キャンセル";
 execFunc = function(ele) {
     if (this.mode == "mkdn") {
+    	const processedText = '';
         const selection = window.getSelection();
-        if (!selection.rangeCount) {
-            alert('テキストが選択されていません。');
-            return;
+        if (selection.rangeCount) {
+	        const range = selection.getRangeAt(0);
+	        const container = document.createElement('div');
+	        container.appendChild(range.cloneContents());
+	        const scripts = container.querySelectorAll('script, style'); 
+	        scripts.forEach(scrpt => {
+	        	scrpt.parentNode.removeChild(scrpt);
+	        });
+	        const images = container.querySelectorAll('img');
+	        images.forEach(img => {
+	            const imgMarkdown = `![](${img.src})`;
+	            const textNode = document.createTextNode(imgMarkdown);
+	            if (img.nextSibling) {
+	                img.parentNode.insertBefore(textNode, img.nextSibling);
+	            } else {
+	                img.parentNode.appendChild(textNode);
+	            }
+	        });
+	        const links = container.querySelectorAll('a');
+	        links.forEach(link => {
+	            const linkMarkdown = `[${link.textContent}](${link.href})`;
+	            const textNode = document.createTextNode(linkMarkdown);
+	            if (link.nextSibling) {
+	                link.parentNode.insertBefore(textNode, link.nextSibling);
+	            } else {
+	                link.parentNode.appendChild(textNode);
+	            }
+	        });
+	        processedText = container.innerText.replace(/^(\r\n|\n|\r){2,}$/gm, '\n\n');
         }
-        const range = selection.getRangeAt(0);
-        const container = document.createElement('div');
-        container.appendChild(range.cloneContents());
-        const images = container.querySelectorAll('img');
-        images.forEach(img => {
-            const imgMarkdown = `![](${img.src})`;
-            const textNode = document.createTextNode(imgMarkdown);
-            if (img.nextSibling) {
-                img.parentNode.insertBefore(textNode, img.nextSibling);
-            } else {
-                img.parentNode.appendChild(textNode);
-            }
-        });
-        const links = container.querySelectorAll('a');
-        links.forEach(link => {
-            const linkMarkdown = `[${link.textContent}](${link.href})`;
-            const textNode = document.createTextNode(linkMarkdown);
-            if (link.nextSibling) {
-                link.parentNode.insertBefore(textNode, link.nextSibling);
-            } else {
-                link.parentNode.appendChild(textNode);
-            }
-        });
-        const processedText = container.innerText.replace(/^(\r\n|\n|\r){2,}$/gm, '\n\n');
+
         copyTxt = "[" + document.title + "](" + location.href + ")\n";
         copyTxt += processedText;
     } else if (this.mode == "cncl") {
@@ -57,6 +61,10 @@ function copyTextToClipboard(text) {
         console.error('クリップボードへのコピーに失敗しました', err);
         fallbackCopyTextToClipboard(text);
     });
+}
+
+function amazonURLShorten(){
+    ['www.amazon.co.jp', 'www.amazon.com'].includes(location.host) && (m = location.pathname.match(/\/(dp|gp\/product)\/\w+/)) ? location.href = location.origin + m[0] : alert( % 27 Amazon\u306e\u5546\u54c1\u30da\u30fc\u30b8\u3092\u8868\u793a\u3057\u3066\u304f\u3060\u3055\u3044 % 27);
 }
 
 function fallbackCopyTextToClipboard(text) {
